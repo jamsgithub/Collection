@@ -12,10 +12,34 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
+        externalNativeBuild {
+            cmake {
+                cppFlags ""
+            }
+        }
+        ndk {//编译在哪个CPU平台上
+            abiFilters 'armeabi-v7a'
+        }
+        sourceSets.main {//外部so文件路径
+            jniLibs.srcDir 'libs'
+        }
+    }
+
+    externalNativeBuild {
+        // Encapsulates your CMake build configurations.
+        cmake {
+            // Provides a relative path to your CMake build script.
+            path "CMakeLists.txt"
+        }
     }
 
     signingConfigs {
-        release
+        release {
+            keyAlias 'collection'
+            keyPassword 'collectiondev'
+            storeFile file('../app/collection.jks')
+            storePassword 'breakerdev'
+        }
     }
 
     buildTypes {

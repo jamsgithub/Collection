@@ -35,6 +35,10 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
  */
 public class MainActivity extends AppCompatActivity {
 
+    static {
+        System.loadLibrary("encrypt");
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }).start();
-
     }
 
     public void getData(View view) {
@@ -105,4 +108,5 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+    private native boolean isEquals(String str);
 }
