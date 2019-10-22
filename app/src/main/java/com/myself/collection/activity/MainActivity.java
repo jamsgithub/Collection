@@ -1,5 +1,7 @@
 package com.myself.collection.activity;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -8,8 +10,13 @@ import android.view.View;
 import com.myself.collection.R;
 import com.myself.collection.dao.IpModel;
 import com.myself.collection.joggle.IpService;
+import com.myself.collection.sqlite.BaseDaoFactory;
+import com.myself.collection.sqlite.IBaseDao;
+import com.myself.collection.sqlite.entity.Person;
+import com.myself.collection.utils.fileup.BitmapCompressionUtil;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -39,10 +46,13 @@ public class MainActivity extends AppCompatActivity {
         System.loadLibrary("encrypt");
     }
 
+    private IBaseDao<Person> mBaseDao;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mBaseDao = BaseDaoFactory.getInstance().getBaseDao(Person.class);
 
         new Thread(new Runnable() {
             @Override
@@ -52,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
                     URL url = new URL("http://www.jianshu.com/");
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("GET");
-                    connection.setRequestProperty("charset" , "utf-8");
+                    connection.setRequestProperty("charset", "utf-8");
                     connection.connect();
                     int responseCode = connection.getResponseCode();
                     if (responseCode < 200 || responseCode > 300) {
@@ -69,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     String s = result;
-                    Log.i("TAG" , s);
+                    Log.i("TAG", s);
                     is.close();
                     ir.close();
                     reader.close();
@@ -98,7 +108,6 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<IpModel> call, Response<IpModel> response) {
                 String rs = response.body().getData().toString();
                 Log.i("onResponse", rs);
-
             }
 
             @Override
@@ -109,4 +118,28 @@ public class MainActivity extends AppCompatActivity {
 
     }
     private native boolean isEquals(String str);
+
+    public void file_compression(View view){
+        BitmapCompressionUtil instance = BitmapCompressionUtil.getInstance();
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.meizi);
+        int originalSize = instance.getBitmapSize(bitmap);
+        Bitmap img = BitmapCompressionUtil.getInstance().compressionImg(bitmap);
+        int compressionSize = instance.getBitmapSize(img);
+        Log.i("Main" , "originalSize: "  + originalSize + "   compressionedSize:  " + compressionSize);
+    }
+
+    public void insert(View view){
+        Person person = new Person();
+        person.setName("zhangsan");
+        person.setPassword(11111222);
+        person.setPhoto(resource2Bytes(R.drawable.meizi));
+        mBaseDao.insert(person);
+    }
+
+    private byte[] resource2Bytes(int resId){
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), resId);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG , 100 , bos);
+       return bos.toByteArray();
+    }
 }

@@ -56,7 +56,9 @@ char * get_encrypt_str(const char* src){
     return head;
 }
 
-JNIEXPORT jboolean JNICALL jiangwei (JNIEnv * env, jobject obj, jstring str)
+JNIEXPORT jint
+JNICALL
+int jiangwei (JNIEnv * env, jobject obj, jstring str)
 {
     LOGD("JNIEnv1:%p", env);
     const char *strAry = (*env)->GetStringUTFChars(env, str, 0);
@@ -202,7 +204,7 @@ static const char *className = "com/myself/collection/activity/MainActivity";
  * 参数三:(void*)*jiangwei函数指针，指向C函数
  */
 static JNINativeMethod methods[] = {
-        {"isEquals", "(Ljava/lang/String;)Z", (void*)*jiangwei},
+        {"isEquals", "(Ljava/lang/String;)Z", (int*)jiangwei},
 };
 
 jint JNI_OnLoad(JavaVM* vm, void* reserved){

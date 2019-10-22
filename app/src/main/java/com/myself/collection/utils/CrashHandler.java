@@ -29,7 +29,7 @@ import static android.content.ContentValues.TAG;
 
 public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
-    private static CrashHandler  mInstance = new CrashHandler();
+    private static final CrashHandler  mInstance = new CrashHandler();
     private Thread.UncaughtExceptionHandler mDefaultCrashHandler;
     private Context mContext;
     private static final String PATH = Environment.getExternalStorageDirectory().getPath() + "/szoa/crashLog/";
